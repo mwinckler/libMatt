@@ -45,6 +45,25 @@ namespace libMatt.Linq {
 			}
 			return ret;
 		}
+
+		/// <summary>
+		/// Returns true if <c>source</c> contains all values in <c>values</c>, else returns false.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <param name="values"></param>
+		/// <returns></returns>
+		public static bool ContainsAll<T>(this IEnumerable<T> source, IEnumerable<T> values) {
+			if (source == null || values == null)
+				return false;
+
+			bool ret = true;
+			foreach (T item in values) {
+				ret = ret && source.Contains(item);
+			}
+			return ret;
+		}
+
 		
 		/// <summary>
 		/// Removes duplicate entries from the IEnumerable based on the delegate you provide.
