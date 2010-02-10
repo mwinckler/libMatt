@@ -17,6 +17,17 @@ namespace libMatt.Converters {
 			return (null == obj || DBNull.Value == obj ? string.Empty : obj.ToString());
 		}
 
+		/// <summary>
+		/// Returns a new Nullable&lt;int&gt; if the object is null or DBNull.Value, 
+		/// else returns the value of obj.ToInteger().
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static int? TryToInteger(this object obj) {
+			if (obj == null || obj == DBNull.Value)
+				return null;
+			return obj.ToInteger();
+		}
 
 		/// <summary>
 		/// Attempts to convert the object into an integer.
