@@ -49,7 +49,7 @@ namespace libMatt.Converters {
 		/// <returns></returns>
 		public static int ToInteger(this object obj, int defaultValue) {
 			if (obj == null || obj == DBNull.Value)
-				return 0;
+				return defaultValue;
 			double d;
 			if (double.TryParse(obj.ToString(), out d)) {
 				return (int)Math.Floor(d);
