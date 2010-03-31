@@ -175,7 +175,7 @@ namespace libMatt.Converters {
 		/// <param name="obj"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		private static bool TryParseEnum<T>(this object obj, out T value) {
+		public static bool TryParseEnum<T>(this object obj, out T value) {
 			value = default(T);
 			if (IsEnumType(GetString(obj), typeof(T))) {
 				value = GetEnumType<T>(obj);

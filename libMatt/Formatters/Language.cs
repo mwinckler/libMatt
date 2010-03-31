@@ -128,7 +128,7 @@ namespace libMatt.Formatters {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static string GetDescription(Enum obj) {
+		public static string GetDescription(this Enum obj) {
 			if (null == obj)
 				return "";
 
@@ -145,9 +145,8 @@ namespace libMatt.Formatters {
 
 		}
 
-
-
 		#endregion
 
 	}
+
 }

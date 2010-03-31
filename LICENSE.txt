@@ -1,3 +1,5 @@
+libMatt, libMattTests
+--------------------------------
 Copyright (c) 2010 Matt Winckler
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,3 +19,46 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+================================
+
+
+
+SQL Server Compact Edition 3.5
+--------------------------------
+MSDN CODE GALLERY BINARY LICENSE 
+
+You are free to install, use, copy and distribute any number of copies of the software, in object code form, provided that you retain:
+
+• all copyright, patent, trademark, and attribution notices that are present in the software, 
+• this list of conditions, and 
+• the following disclaimer in the documentation and/or other materials provided with the software. 
+
+The software is licensed “as-is.” You bear the risk of using it. No express warranties, guarantees or conditions are provided. To the extent permitted under your local laws, the implied warranties of merchantability, fitness for a particular purpose and non-infringement are excluded. 
+
+This license does not grant you any rights to use any other party’s name, logo, or trademarks. All rights not specifically granted herein are reserved. 
+
+v061708
+================================
+
+
+
+NUnit
+--------------------------------
+NUnit License
+
+Copyright © 2002-2009 Charlie Poole
+Copyright © 2002-2004 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov
+Copyright © 2000-2002 Philip A. Craig
+
+This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment (see the following) in the product documentation is required.
+
+Portions Copyright © 2002-2009 Charlie Poole or Copyright © 2002-2004 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov or Copyright © 2000-2002 Philip A. Craig
+
+2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+
+3. This notice may not be removed or altered from any source distribution.
+================================

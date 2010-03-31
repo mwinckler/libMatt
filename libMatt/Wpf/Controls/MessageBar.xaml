@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="libMatt.Wpf.MessageBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<UserControl.Resources>
+
+		<Style x:Key="messageStyle" TargetType="{x:Type Label}">
+			<Setter Property="FontSize" Value="14" />
+			<Setter Property="HorizontalAlignment" Value="Center" />
+		</Style>
+
+		<Style x:Key="successStyle" TargetType="{x:Type Label}" BasedOn="{StaticResource messageStyle}">
+			<Setter Property="Foreground" Value="Green" />
+		</Style>
+
+		<Style x:Key="bg" TargetType="{x:Type Border}">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+						<GradientStop Color="#0016bc" Offset="0" />
+						<GradientStop Color="#2a3bba" Offset="1" />
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Path=MessageType}" Value="1">
+					<Setter Property="Background">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+								<GradientStop Color="#740000" Offset="0" />
+								<GradientStop Color="#960000" Offset="1" />
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Path=MessageType}" Value="0">
+					<Setter Property="Background">
+						<Setter.Value>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+								<GradientStop Color="#005808" Offset="0" />
+								<GradientStop Color="#1b6820" Offset="1" />
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
+		<Style x:Key="ErrorBg" TargetType="{x:Type Grid}">
+			<Setter Property="Background">
+				<Setter.Value>
+					<LinearGradientBrush>
+						<GradientStop Color="Red" Offset="-0.4" />
+						<GradientStop Color="Transparent" Offset="1.5" />
+					</LinearGradientBrush>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+
+	</UserControl.Resources>
+
+	<Border Name="msgBorder" Style="{DynamicResource bg}" Padding="7" MouseLeftButtonUp="Border_MouseLeftButtonUp">
+		<DockPanel>
+			<TextBlock 
+			HorizontalAlignment="Center" 
+			TextWrapping="Wrap"
+		    Name="message" 
+		    FontSize="14"
+		    Foreground="White" >
+				<TextBlock.BitmapEffect>
+					<DropShadowBitmapEffect ShadowDepth="1" Color="Black" Opacity="0.7" Softness="0.1" />
+				</TextBlock.BitmapEffect>
+
+			</TextBlock>
+		</DockPanel>
+	</Border>
+</UserControl>

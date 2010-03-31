@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace libMatt.Data {
 
-	public abstract class Dalc {
+	public abstract class Dalc: IDisposable {
 
 		protected class Param {
 			private string _name;
@@ -29,6 +29,19 @@ namespace libMatt.Data {
 
 		protected CommandType DefaultCommandType { get; set; }
 
+		/// <summary>
+		/// Instantiates dalc to use an existing transaction.
+		/// 
+		/// Note that this will cause the dalc to ignore the transaction
+		/// during Dispose, as it is assumed that a different Dalc instance
+		/// is the owner of the transaction.
+		/// </summary>
+		/// <param name="trans"></param>
+		public Dalc(IDbTransaction trans) {
+			_trans = trans;
+			this.DefaultCommandType = CommandType.Text;
+		}
+
 		public Dalc(IDataProvider provider) : this(provider, CommandType.Text) { }
 
 		public Dalc(IDataProvider provider, CommandType defaultCommandType) {
@@ -49,7 +62,11 @@ namespace libMatt.Data {
 		}
 
 		protected System.Data.IDbConnection GetConnection() {
-			return DataProvider.CreateConnection();
+			if (_trans != null) {
+				return _trans.Connection;
+			} else {
+				return DataProvider.CreateConnection();
+			}
 		}
 
 
@@ -95,19 +112,6 @@ namespace libMatt.Data {
 			DisposeCommand(da.SelectCommand);
 			return (ds.Tables.Count > 0 ? ds.Tables[0] : null);
 		}
-		/*
-		protected static DataTable ExecuteDatatable(string commandText, CommandType commandType, params Param[] parameters) {
-			var dt = new DataTable();
-			var da = new SqlDataAdapter();
-			da.SelectCommand = GetSqlCommand(commandText, commandType, parameters);
-			da.Fill(dt);
-			// Must close connection manually - Fill only auto-closes if the connection
-			// was closed to begin with (and GetSqlCommand opens it).
-			da.SelectCommand.Connection.Close();
-			da.Dispose();
-			return dt;
-		}
-		*/
 
 		protected DataTable ExecuteDataTable(string commandText, params Param[] parameters) {
 			return ExecuteDataTable(commandText, this.DefaultCommandType, parameters);
@@ -115,6 +119,9 @@ namespace libMatt.Data {
 
 		protected IDbCommand GetCommand(string commandText, CommandType commandType, params Param[] parameters) {
 			IDbCommand cmd = GetConnection().CreateCommand();
+			if (_trans != null) {
+				cmd.Transaction = _trans;
+			}
 			cmd.CommandText = commandText;
 			cmd.CommandType = commandType;
 			IDataParameter parm;
@@ -134,7 +141,8 @@ namespace libMatt.Data {
 
 		protected void DisposeCommand(IDbCommand cmd) {
 			if (null != cmd) {
-				if (null != cmd.Connection) {
+				// Do not dispose connection if this command is part of an ongoing transaction.
+				if (_trans == null && null != cmd.Connection) {
 					if (cmd.Connection.State != ConnectionState.Closed)
 						cmd.Connection.Close();
 					cmd.Connection.Dispose();
@@ -154,106 +162,52 @@ namespace libMatt.Data {
 		}
 
 
+		#region Transactions
 
+		private bool _isTransOwner = false;
+		private IDbTransaction _trans;
 
-		/*
-		protected IDbCommand GetCommand() {
-			IDbCommand cmd = GetConnection().CreateCommand();
-			cmd.CommandType = CommandType.Text;
-			return cmd;
-		}
-
-		protected IDbCommand GetCommand(string commandText) {
-			IDbCommand cmd = GetCommand();
-			cmd.CommandText = commandText;
-			return cmd;
-		}
-
-		protected IDbCommand GetCommand(
-			string commandText,
-			Param[] parameters
-			) {
-			IDbCommand cmd = GetCommand(commandText);
-			IDbDataParameter param = null;
-			foreach (Param parm in parameters) {
-				param = cmd.CreateParameter();
-				param.ParameterName = parm.Name;
-				param.Value = parm.Value;
-				cmd.Parameters.Add(param);
+		public IDbTransaction BeginTransaction() {
+			if (_trans != null) {
+				throw new InvalidOperationException("[Dalc.BeginTransaction] Cannot begin new transaction: a transaction is already in progress.");
 			}
-			return cmd;
+			var conn = this.DataProvider.CreateConnection();
+			_trans = conn.BeginTransaction();
+			_isTransOwner = true;
+			return _trans;
 		}
-
-		protected IDbCommand GetCommand(
-			string commandText,
-			FieldCollection parameters
-			) {
-			return GetCommand(commandText, parameters.Fields.ConvertAll<Param>(
-				delegate(FieldDefinition fd) { return new Param(fd.FieldName, fd.Value); }
-			).ToArray());
-		}
-
-
-		protected DataTable ExecuteDataTable(
-			string commandText,
-			Param[] parameters) {
-
-			IDbDataAdapter da = DataProvider.CreateDataAdapter();
-			da.SelectCommand = GetCommand(commandText, parameters);
-
-			DataSet ds = new DataSet();
-			da.Fill(ds);
-			DisposeCommand(da.SelectCommand);
-			return (ds.Tables.Count > 0 ? ds.Tables[0] : null);
-		}
-
-		protected DataTable ExecuteDataTable(string commandText) {
-			return ExecuteDataTable(commandText, new Param[] { });
-		}
-
-		protected void ExecuteNonQuery(
-			string commandText,
-			Param[] parameters) {
-			IDbCommand cmd = null;
-			try {
-				cmd = GetCommand(commandText, parameters);
-				cmd.ExecuteNonQuery();
-			} catch (System.Data.Common.DbException ex) {
-				HandleException(ex, commandText, parameters);
-			} finally {
-				DisposeCommand(cmd);
+		/* Better not to expose these - the caller should deal with the transaction object directly.
+		public void Commit() {
+			if (_trans != null) {
+				_trans.Commit();
 			}
 		}
 
-		protected object ExecuteScalar(
-			string commandText,
-			Param[] parameters) {
-			object ret = null;
-			IDbCommand cmd = null;
-			try {
-				cmd = GetCommand(commandText, parameters);
-				ret = cmd.ExecuteScalar();
-			} catch (System.Data.Common.DbException ex) {
-				HandleException(ex, commandText, parameters);
-			} finally {
-				DisposeCommand(cmd);
-			}
-			return ret;
-		}
-
-
-		protected void DisposeCommand(IDbCommand cmd) {
-			if (null != cmd) {
-				if (null != cmd.Connection && cmd.Connection.State != ConnectionState.Closed)
-					cmd.Connection.Close();
-				cmd.Connection.Dispose();
-				cmd.Dispose();
+		public void Rollback() {
+			if (_trans != null) {
+				_trans.Rollback();
 			}
 		}
-
-
-
 		*/
+		#endregion
+
+
+		#region IDisposable Members
+
+		public void Dispose() {
+			// Check for existing connection and any open transactions.
+			if (_isTransOwner && _trans != null) {
+				if (_trans.Connection != null) {
+					if (_trans.Connection.State != ConnectionState.Closed) {
+						_trans.Connection.Close();
+					}
+					_trans.Connection.Dispose();
+				}
+				_trans.Dispose();
+			}
+		}
+
+		#endregion
 	}
 
 }
