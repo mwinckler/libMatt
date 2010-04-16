@@ -102,7 +102,7 @@ namespace libMatt.Data {
 		protected DataTable ExecuteDataTable(
 				string commandText,
 				CommandType commandType,
-				Param[] parameters) {
+				params Param[] parameters) {
 
 			IDbDataAdapter da = DataProvider.CreateDataAdapter();
 			da.SelectCommand = GetCommand(commandText, commandType, parameters);
