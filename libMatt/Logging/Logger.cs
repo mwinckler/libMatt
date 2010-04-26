@@ -63,6 +63,7 @@ namespace libMatt.Logging {
 			return method.GetParameters();
 		}
 
+
 	}
 
 }

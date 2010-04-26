@@ -9,22 +9,14 @@ namespace libMatt.Data {
 	public abstract class Dalc: IDisposable {
 
 		protected class Param {
-			private string _name;
-			private object _value;
 
 			public Param(string name, object value) {
-				Name = name;
-				Value = value;
+				this.Name = name;
+				this.Value = value;
 			}
 
-			public string Name {
-				get { return _name; }
-				set { _name = value; }
-			}
-			public object Value {
-				get { return _value; }
-				set { _value = value; }
-			}
+			public string Name { get; set; }
+			public object Value { get; set; }
 		}
 
 		protected CommandType DefaultCommandType { get; set; }
