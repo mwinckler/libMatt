@@ -128,7 +128,7 @@ namespace libMatt.Formatters {
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <returns></returns>
-		public static string GetDescription(this Enum obj) {
+		public static string Description(this Enum obj) {
 			if (null == obj)
 				return "";
 
