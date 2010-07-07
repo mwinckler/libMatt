@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
+using libMatt.Converters;
 
 namespace libMatt.Data {
 
@@ -91,6 +92,13 @@ namespace libMatt.Data {
 			return cmd.ExecuteReader(CommandBehavior.CloseConnection);
 		}
 
+		/// <summary>
+		/// Returns a datatable populated with the results of the command.
+		/// </summary>
+		/// <param name="commandText"></param>
+		/// <param name="commandType"></param>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
 		protected DataTable ExecuteDataTable(
 				string commandText,
 				CommandType commandType,

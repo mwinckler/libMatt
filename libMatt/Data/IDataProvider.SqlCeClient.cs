@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+#if USE_SQLSERVERCE
 using System.Data.SqlServerCe;
+#endif
 
 namespace libMatt.Data {
 
@@ -10,16 +12,16 @@ namespace libMatt.Data {
 
 	public class SqlCeDataProvider: IDataProvider {
 
-		private string _conn_str;
+		private string _connStr;
 
 		public SqlCeDataProvider(string connectionString) {
-			_conn_str = connectionString;
+			_connStr = connectionString;
 		}
 
 		#region IDataProvider Members
 
 		public System.Data.IDbConnection CreateConnection() {
-			var conn = new SqlCeConnection(_conn_str);
+			var conn = new SqlCeConnection(_connStr);
 			conn.Open();
 			return conn;
 		}

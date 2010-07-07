@@ -150,6 +150,7 @@ namespace libMatt.Converters {
 		/// <returns></returns>
 		private static T GetEnumType<T>(object obj) {
 			string str = GetString(obj);
+			
 			if (!IsEnumType(str, typeof(T)) || string.IsNullOrEmpty(str)) {
 				return default(T);
 			}
@@ -158,14 +159,20 @@ namespace libMatt.Converters {
 
 		private static bool IsEnumType(string str, Type enumType) {
 			if (!String.IsNullOrEmpty(str)) {
-				foreach (string name in Enum.GetNames(enumType)) {
-					if (str.ToLower() == name.ToLower()) {
-						return true;
-					}
+				int i;
+				if (int.TryParse(str, out i) && Enum.IsDefined(enumType, i)) {
+					return true;
 				}
+				return Enum.IsDefined(enumType, str);
 			}
 			return false;
+		}
 
+		public static T ToEnum<T>(this object obj) {
+			string str = GetString(obj);
+			if (!IsEnumType(str, typeof(T)))
+				throw new ArgumentException("The specified object cannot be converted to type " + typeof(T).Name + ".");
+			return GetEnumType<T>(obj);
 		}
 
 		/// <summary>

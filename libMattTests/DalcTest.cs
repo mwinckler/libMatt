@@ -8,7 +8,7 @@ using libMatt.Converters;
 using libMatt.Data;
 
 namespace libMattTests {
-
+#if USE_SQLSERVERCE
 	[TestFixture]
 	public class DalcTest {
 		private string _dbFilename = "libMattTest.sdf";
@@ -161,4 +161,5 @@ namespace libMattTests {
 
 
 	}
+#endif
 }

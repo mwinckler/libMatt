@@ -42,11 +42,11 @@ namespace libMatt.Formatters {
 			return new CultureInfo("en").TextInfo.ToTitleCase(str.ToLower());
 		}
 
-		public static string Pluralize(int count, string singular) {
+		public static string Pluralize(this int count, string singular) {
 			return count.ToString() + " " + GetPlural(count, singular);
 		}
 
-		public static string Pluralize(int count, string singular, string plural) {
+		public static string Pluralize(this int count, string singular, string plural) {
 			return count.ToString() + " " + GetPlural(count, singular, plural);
 		}
 
