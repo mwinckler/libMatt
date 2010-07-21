@@ -60,6 +60,36 @@ namespace libMatt.Converters {
 		}
 
 		/// <summary>
+		/// Attempts to convert the object to a long.
+		/// If the object is a double, returns the truncated value as a long value.
+		/// If the object cannot be parsed as a long, returns 0.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static long ToLong(this object obj) {
+			return obj.ToLong(0);
+		}
+
+		/// <summary>
+		/// Attempts to convert the object to a long.
+		/// If the object is a double, returns the truncated value as a long value.
+		/// If the object cannot be parsed as a long, returns defaultValue.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static long ToLong(this object obj, long defaultValue) {
+			if (obj == null || obj == DBNull.Value)
+				return defaultValue;
+			double d;
+			if (double.TryParse(obj.ToString(), out d)) {
+				return (long)Math.Floor(d);
+			} else {
+				long i = 0;
+				return (long.TryParse(GetString(obj), out i) ? i : defaultValue);
+			}
+		}
+
+		/// <summary>
 		/// Attempts to convert the object to a double. On failure, returns 0.
 		/// </summary>
 		/// <param name="obj"></param>
