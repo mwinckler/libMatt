@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using libMatt.Converters;
+using System.ComponentModel;
 
 namespace libMatt.MathExtensions {
 	public static class MathExtensions {
@@ -54,8 +55,18 @@ namespace libMatt.MathExtensions {
 		/// <param name="time">The timespan to be rounded.</param>
 		/// <param name="roundingInterval">The interval to which &lt;time&gt; should be rounded. (E.g. to round to the nearest 5 minutes, supply TimeSpan.FromMinutes(5).)</param>
 		/// <returns></returns>
+
+		public static TimeSpan Round(this TimeSpan time, TimeSpan roundingInterval, MidpointRounding roundingType) {
+			return new TimeSpan(
+				Convert.ToInt64(Math.Round(
+					time.Ticks / (decimal)roundingInterval.Ticks,
+					roundingType
+				)) * roundingInterval.Ticks
+			);
+		}
+
 		public static TimeSpan Round(this TimeSpan time, TimeSpan roundingInterval) {
-			return new TimeSpan(Math.Round(((time.Ticks + ((double)roundingInterval.Ticks / 2).ToLong()) / roundingInterval.Ticks) * (double)roundingInterval.Ticks).ToLong());
+			return Round(time, roundingInterval, MidpointRounding.ToEven);
 		}
 
 		public static DateTime Round(this DateTime datetime, TimeSpan roundingInterval) {
@@ -63,5 +74,18 @@ namespace libMatt.MathExtensions {
 		}
 
 
+		public static TimeSpan Truncate(this TimeSpan span, TimeSpan interval) {
+			return new TimeSpan(
+				Convert.ToInt64(
+					Math.Floor(span.Ticks / (decimal)interval.Ticks) * interval.Ticks
+				)
+			);
+		}
+
+		public static DateTime Truncate(this DateTime datetime, TimeSpan interval) {
+			return new DateTime((datetime - DateTime.MinValue).Truncate(interval).Ticks);
+		}
+
 	}
+
 }
