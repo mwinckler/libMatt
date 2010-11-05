@@ -46,10 +46,10 @@ namespace libMatt.Formatters {
 			}
 
 			DataRow newRow;
-			foreach (var dateGroup in crossTab) {
+			foreach (var row in crossTab) {
 				newRow = crossTabResults.NewRow();
-				newRow[rowHeaderField] = dateGroup.YHeader;
-				foreach (var xDatapoint in dateGroup.Datapoints) {
+				newRow[rowHeaderField] = row.YHeader;
+				foreach (var xDatapoint in row.Datapoints) {
 					newRow[xDatapoint.Key] = xDatapoint.Value.Data;
 				}
 				crossTabResults.Rows.Add(newRow);

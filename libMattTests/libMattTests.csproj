@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>libMattTests</RootNamespace>
     <AssemblyName>libMattTests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -75,6 +75,7 @@
     <Compile Include="AttributeTest.cs" />
     <Compile Include="ConverterTest.cs" />
     <Compile Include="DalcTest.cs" />
+    <Compile Include="MathTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

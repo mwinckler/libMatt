@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using libMatt.Converters;
 
 namespace libMatt.MathExtensions {
 	public static class MathExtensions {
@@ -44,6 +45,23 @@ namespace libMatt.MathExtensions {
 			}
 			return ret;
 		}
+
+
+		/// <summary>
+		/// Returns a value representing &lt;time&gt; rounded to the nearest multiple of &lt;roundingInterval&gt;.
+		/// This function has a maximum granularity of seconds.
+		/// </summary>
+		/// <param name="time">The timespan to be rounded.</param>
+		/// <param name="roundingInterval">The interval to which &lt;time&gt; should be rounded. (E.g. to round to the nearest 5 minutes, supply TimeSpan.FromMinutes(5).)</param>
+		/// <returns></returns>
+		public static TimeSpan Round(this TimeSpan time, TimeSpan roundingInterval) {
+			return new TimeSpan(Math.Round(((time.Ticks + ((double)roundingInterval.Ticks / 2).ToLong()) / roundingInterval.Ticks) * (double)roundingInterval.Ticks).ToLong());
+		}
+
+		public static DateTime Round(this DateTime datetime, TimeSpan roundingInterval) {
+			return new DateTime((datetime - DateTime.MinValue).Round(roundingInterval).Ticks);
+		}
+
 
 	}
 }

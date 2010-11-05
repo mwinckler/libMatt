@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 
 namespace libMatt.Classes {
-	public class Extensions {
+	public static class Extensions {
 		/// <summary>
 		/// Compares the properties of two objects and looks for differences. It will return an IEnumerable that contains the parameters that differ. Otherwise it will return null.
 		/// </summary>
@@ -34,5 +34,19 @@ namespace libMatt.Classes {
 			else
 				return null;
 		}
+
+		/// <summary>
+		/// Returns true if the object implements the specified interface (or derives from the specified class).
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static bool Implements<T>(this object obj) where T: class {
+			if (obj == null)
+				return false;
+
+			return typeof(T).IsAssignableFrom(obj.GetType());
+		}
+
 	}
 }

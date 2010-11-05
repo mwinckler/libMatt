@@ -33,5 +33,16 @@ namespace libMatt.Linq {
 			return (from TreeNode node in treeview.Nodes select node).SelectMany(getNodes).Where(n => tag.Equals(n.Tag)).FirstOrDefault();
 		}
 
+		/// <summary>
+		/// Updates child nodes with the checked state of the parent.
+		/// </summary>
+		/// <param name="node"></param>
+		public static void CheckChildnodes(this TreeNode node, bool isChecked) {
+			foreach (TreeNode child in node.Nodes) {
+				child.Checked = isChecked;
+				CheckChildnodes(child, isChecked);
+			}
+		}
+
 	}
 }
