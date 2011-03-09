@@ -65,9 +65,13 @@ namespace libMatt.Data {
 
 		protected object ExecuteScalar(string commandText, CommandType commandType, params Param[] parameters) {
 			var cmd = GetCommand(commandText, parameters);
-			cmd.CommandType = commandType;
-			object ret = cmd.ExecuteScalar();
-			DisposeCommand(cmd);
+			object ret = null;
+			try {
+				cmd.CommandType = commandType;
+				ret = cmd.ExecuteScalar();
+			} finally {
+				DisposeCommand(cmd);
+			}
 			return ret;
 		}
 
@@ -78,9 +82,12 @@ namespace libMatt.Data {
 
 		protected void ExecuteNonQuery(string commandText, CommandType commandType, params Param[] parameters) {
 			var cmd = GetCommand(commandText, parameters);
-			cmd.CommandType = commandType;
-			cmd.ExecuteNonQuery();
-			DisposeCommand(cmd);
+			try {
+				cmd.CommandType = commandType;
+				cmd.ExecuteNonQuery();
+			} finally {
+				DisposeCommand(cmd);
+			}
 		}
 
 		protected void ExecuteNonQuery(string commandText, params Param[] parameters) {
@@ -106,10 +113,12 @@ namespace libMatt.Data {
 
 			IDbDataAdapter da = DataProvider.CreateDataAdapter();
 			da.SelectCommand = GetCommand(commandText, commandType, parameters);
-
 			DataSet ds = new DataSet();
-			da.Fill(ds);
-			DisposeCommand(da.SelectCommand);
+			try {
+				da.Fill(ds);
+			} finally {
+				DisposeCommand(da.SelectCommand);
+			}
 			return (ds.Tables.Count > 0 ? ds.Tables[0] : null);
 		}
 
@@ -119,17 +128,22 @@ namespace libMatt.Data {
 
 		protected IDbCommand GetCommand(string commandText, CommandType commandType, params Param[] parameters) {
 			IDbCommand cmd = GetConnection().CreateCommand();
-			if (_trans != null) {
-				cmd.Transaction = _trans;
-			}
-			cmd.CommandText = commandText;
-			cmd.CommandType = commandType;
-			IDataParameter parm;
-			foreach (var p in parameters) {
-				parm = cmd.CreateParameter();
-				parm.ParameterName = p.Name;
-				parm.Value = p.Value;
-				cmd.Parameters.Add(parm);
+			try {
+				if (_trans != null) {
+					cmd.Transaction = _trans;
+				}
+				cmd.CommandText = commandText;
+				cmd.CommandType = commandType;
+				IDataParameter parm;
+				foreach (var p in parameters) {
+					parm = cmd.CreateParameter();
+					parm.ParameterName = p.Name;
+					parm.Value = p.Value;
+					cmd.Parameters.Add(parm);
+				}
+			} catch (Exception ex) {
+				DisposeCommand(cmd);
+				throw;
 			}
 			return cmd;
 

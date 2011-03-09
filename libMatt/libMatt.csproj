@@ -141,13 +141,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ColorHsl.cs" />
     <Compile Include="Classes\Extensions.cs" />
+    <Compile Include="Converters\ColorConversion.cs" />
     <Compile Include="Data\IDataProvider.MSAccess.cs" />
     <Compile Include="Wpf\Controls\FilteredListBox.xaml.cs">
       <DependentUpon>FilteredListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wpf\Interfaces\ICheckable.cs" />
     <Compile Include="Wpf\ValueConverters\AutoFit.cs" />
+    <Compile Include="Wpf\ValueConverters\ColorToSolidBrush.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
