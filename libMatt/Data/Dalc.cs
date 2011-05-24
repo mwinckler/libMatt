@@ -11,13 +11,17 @@ namespace libMatt.Data {
 
 		protected class Param {
 
-			public Param(string name, object value) {
+			public Param(string name, object value): this(name, value, ParameterDirection.Input) { }
+
+			public Param(string name, object value, ParameterDirection direction) {
 				this.Name = name;
 				this.Value = value;
+				this.Direction = direction;
 			}
 
 			public string Name { get; set; }
 			public object Value { get; set; }
+			public ParameterDirection Direction { get; set; }
 		}
 
 		protected CommandType DefaultCommandType { get; set; }
@@ -45,6 +49,21 @@ namespace libMatt.Data {
 
 		public IDataProvider DataProvider { get; private set; }
 
+		/// <summary>
+		/// Iterates through the given parameters and assigns values from the IDbCommand's parameters
+		/// to the 
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <param name="cmd"></param>
+		private void PopulateOutParameters(Param[] parameters, IDbCommand cmd) {
+			// Check for out param values
+			foreach (var param in parameters) {
+				if (cmd.Parameters.Contains(param.Name)) {
+					param.Value = ((IDbDataParameter)cmd.Parameters[param.Name]).Value;
+				}
+			}
+		}
+
 		private void HandleException(Exception ex, string commandText, Param[] parameters) {
 			List<string> parms = new List<string>();
 			foreach (Param p in parameters) {
@@ -69,6 +88,7 @@ namespace libMatt.Data {
 			try {
 				cmd.CommandType = commandType;
 				ret = cmd.ExecuteScalar();
+				PopulateOutParameters(parameters, cmd);
 			} finally {
 				DisposeCommand(cmd);
 			}
@@ -85,6 +105,7 @@ namespace libMatt.Data {
 			try {
 				cmd.CommandType = commandType;
 				cmd.ExecuteNonQuery();
+				PopulateOutParameters(parameters, cmd);
 			} finally {
 				DisposeCommand(cmd);
 			}
@@ -96,7 +117,9 @@ namespace libMatt.Data {
 
 		protected IDataReader ExecuteReader(string commandText, params Param[] parameters) {
 			var cmd = GetCommand(commandText, parameters);
-			return cmd.ExecuteReader(CommandBehavior.CloseConnection);
+			var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+			PopulateOutParameters(parameters, cmd);
+			return reader;
 		}
 
 		/// <summary>
@@ -116,6 +139,7 @@ namespace libMatt.Data {
 			DataSet ds = new DataSet();
 			try {
 				da.Fill(ds);
+				PopulateOutParameters(parameters, da.SelectCommand);
 			} finally {
 				DisposeCommand(da.SelectCommand);
 			}
@@ -134,11 +158,16 @@ namespace libMatt.Data {
 				}
 				cmd.CommandText = commandText;
 				cmd.CommandType = commandType;
-				IDataParameter parm;
+				IDbDataParameter parm;
 				foreach (var p in parameters) {
 					parm = cmd.CreateParameter();
 					parm.ParameterName = p.Name;
 					parm.Value = p.Value;
+					parm.Direction = p.Direction;
+					// If this is an out parameter, the size must be specified.
+					if (p.Direction != ParameterDirection.Input) {
+						parm.Size = 4000; // varchar max
+					}
 					cmd.Parameters.Add(parm);
 				}
 			} catch (Exception ex) {
