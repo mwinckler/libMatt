@@ -145,6 +145,7 @@
     <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Converters\ColorConversion.cs" />
     <Compile Include="Data\IDataProvider.MSAccess.cs" />
+    <Compile Include="Data\IDataProvider.Odbc.cs" />
     <Compile Include="Wpf\Controls\FilteredListBox.xaml.cs">
       <DependentUpon>FilteredListBox.xaml</DependentUpon>
     </Compile>
