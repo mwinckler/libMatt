@@ -48,5 +48,43 @@ namespace libMatt.Classes {
 			return typeof(T).IsAssignableFrom(obj.GetType());
 		}
 
+
+
+		/// <summary>
+		/// Merges the source dictionary onto the target dictionary and returns the result.
+		/// This function creates a new dictionary and returns the result in that, leaving 
+		/// mergeTarget unmodified.
+		/// </summary>
+		/// <typeparam name="K">(Generic Type) The type of the dictionary key.</typeparam>
+		/// <typeparam name="V">(Generic Type) The type of the dictionary value.</typeparam>
+		/// <param name="mergeTarget">(Dictionary&lt;K, V&gt;) The dictionary onto which to merge values.</param>
+		/// <param name="mergeSource">(Dictinoary&lt;K, V&gt;) The dictionary from which to take values for merge. Key-values from source override key-values from target.</param>
+		/// <returns>A dictionary representing the union of the two dictionaries, with source overriding target where key collisions occur..</returns>
+		public static Dictionary<K, V> Merge<K, V>(this Dictionary<K, V> mergeTarget, Dictionary<K, V> mergeSource) {
+			return Merge(mergeTarget, mergeSource, false);
+		}
+
+
+		/// <summary>
+		/// Merges the source dictionary onto the target dictionary and returns the result.
+		/// If inPlace is specified true, this function modifies mergeTarget itself, else
+		/// it creates a new dictionary and returns the result in that, leaving mergeTarget
+		/// unmodified.
+		/// </summary>
+		/// <typeparam name="K">(Generic Type) The type of the dictionary key.</typeparam>
+		/// <typeparam name="V">(Generic Type) The type of the dictionary value.</typeparam>
+		/// <param name="mergeTarget">(Dictionary&lt;K, V&gt;) The dictionary onto which to merge values.</param>
+		/// <param name="mergeSource">(Dictinoary&lt;K, V&gt;) The dictionary from which to take values for merge. Key-values from source override key-values from target.</param>
+		/// <param name="inPlace">(bool) Whether to perform the merge in-place on mergeTarget. If true, this function modifies mergeTarget itself.</param>
+		/// <returns>A dictionary representing the union of the two dictionaries, with source overriding target where key collisions occur..</returns>
+		public static Dictionary<K, V> Merge<K, V>(this Dictionary<K, V> mergeTarget, Dictionary<K, V> mergeSource, bool inPlace) {
+			var ret = (inPlace ? mergeTarget : new Dictionary<K,V>(mergeTarget));
+
+			foreach (var kv in mergeSource) {
+				ret[kv.Key] = kv.Value;
+			}
+			return ret;
+		}
+
 	}
 }
