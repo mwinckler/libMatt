@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libMatt", "libMatt\libMatt.csproj", "{78E03CDD-4A91-438D-9A1F-562DE42B43B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libMattTests", "libMattTests\libMattTests.csproj", "{2F052092-5BBB-4ADA-BA73-37928C6303FF}"
