@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="Classes\DynamicDictionary.cs" />
     <Compile Include="Data\Dalc.cs" />
+    <Compile Include="Data\DalcTransaction.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\IDataProvider.cs" />
     <Compile Include="Data\IDataProvider.SqlCeClient.cs" />

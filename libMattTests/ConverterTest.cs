@@ -29,6 +29,18 @@ namespace libMattTests {
 			Assert.AreEqual(str, str.GetString());
 		}
 
+		[Test]
+		public void ParseRangeFromString() {
+			var parseResults = "1,2,5-8,12".ParseRanges().ToList();
+			Assert.Contains(1, parseResults);
+			Assert.Contains(2, parseResults);
+			Assert.Contains(5, parseResults);
+			Assert.Contains(6, parseResults);
+			Assert.Contains(7, parseResults);
+			Assert.Contains(8, parseResults);
+			Assert.Contains(12, parseResults);
+		}
+
 		#endregion
 
 		#region Ints

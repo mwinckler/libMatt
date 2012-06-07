@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace libMatt.Converters {
 	public static class DataConversion {
@@ -16,6 +18,35 @@ namespace libMatt.Converters {
 		public static string GetString(this object obj) {
 			return (null == obj || DBNull.Value == obj ? string.Empty : obj.ToString());
 		}
+
+		/// <summary>
+		/// Parses integers from a string containing numbers that
+		/// may be separated by commas (indicating single values) or
+		/// hyphens (indicating range). For example, "1,2,5-8,12" would
+		/// return { 1,2,5,6,7,8,12 }. Non-integer entries in the string will be ignored.
+		/// </summary>
+		/// <param name="str">(string) The string of numeric (integral) ranges to parse.</param>
+		/// <returns>(IEnumerable&lt;int&gt;) The integers parsed from the string.</returns>
+		public static IEnumerable<int> ParseRanges(this string str) {
+			int i, j;
+			string[] ar;
+			foreach (var entry in str.Split(',')) {
+				ar = entry.Split('-');
+				if (int.TryParse(ar[0].Trim(), out i)) {
+					if (ar.Length > 1) {
+						if (int.TryParse(ar[1].Trim(), out j)) {
+							foreach (var k in Enumerable.Range(i, j - i + 1)) {
+								yield return k;
+							}
+						}
+					} else {
+						// This is a single number.
+						yield return i;
+					}
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Returns a new Nullable&lt;int&gt; if the object is null or DBNull.Value, 
@@ -180,7 +211,7 @@ namespace libMatt.Converters {
 		/// <returns></returns>
 		private static T GetEnumType<T>(object obj) {
 			string str = GetString(obj);
-			
+
 			if (!IsEnumType(str, typeof(T)) || string.IsNullOrEmpty(str)) {
 				return default(T);
 			}

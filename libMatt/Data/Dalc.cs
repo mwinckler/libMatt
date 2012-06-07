@@ -35,7 +35,11 @@ namespace libMatt.Data {
 		/// </summary>
 		/// <param name="trans"></param>
 		public Dalc(IDbTransaction trans) {
-			_trans = trans;
+			if (!(trans is DalcTransaction)) {
+				_trans = new DalcTransaction(this, trans);
+			} else {
+				_trans = trans as DalcTransaction;
+			}
 			this.DefaultCommandType = CommandType.Text;
 		}
 
@@ -74,7 +78,7 @@ namespace libMatt.Data {
 		}
 
 		protected System.Data.IDbConnection GetConnection() {
-			if (_trans != null) {
+			if (_trans != null && !_trans.IsDisposed) {
 				return _trans.Connection;
 			} else {
 				return DataProvider.CreateConnection();
@@ -117,6 +121,7 @@ namespace libMatt.Data {
 
 		protected IDataReader ExecuteReader(string commandText, params Param[] parameters) {
 			var cmd = GetCommand(commandText, parameters);
+			// Open with CommandBehavior.CloseConnection so that connection is closed on reader close.
 			var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 			PopulateOutParameters(parameters, cmd);
 			return reader;
@@ -154,7 +159,7 @@ namespace libMatt.Data {
 			IDbCommand cmd = GetConnection().CreateCommand();
 			try {
 				if (_trans != null) {
-					cmd.Transaction = _trans;
+					cmd.Transaction = _trans.DbTransaction;
 				}
 				cmd.CommandText = commandText;
 				cmd.CommandType = commandType;
@@ -208,30 +213,30 @@ namespace libMatt.Data {
 		#region Transactions
 
 		private bool _isTransOwner = false;
-		private IDbTransaction _trans;
+		private DalcTransaction _trans;
 
 		public IDbTransaction BeginTransaction() {
-			if (_trans != null) {
+			if (_trans != null && !_trans.IsDisposed) {
 				throw new InvalidOperationException("[Dalc.BeginTransaction] Cannot begin new transaction: a transaction is already in progress.");
 			}
 			var conn = this.DataProvider.CreateConnection();
-			_trans = conn.BeginTransaction();
+			_trans = new DalcTransaction(this, conn.BeginTransaction());
 			_isTransOwner = true;
 			return _trans;
 		}
-		/* Better not to expose these - the caller should deal with the transaction object directly.
+
 		public void Commit() {
-			if (_trans != null) {
+			if (_trans != null && !_trans.IsDisposed) {
 				_trans.Commit();
 			}
 		}
 
 		public void Rollback() {
-			if (_trans != null) {
+			if (_trans != null && !_trans.IsDisposed) {
 				_trans.Rollback();
 			}
 		}
-		*/
+
 		#endregion
 
 
@@ -239,7 +244,11 @@ namespace libMatt.Data {
 
 		public void Dispose() {
 			// Check for existing connection and any open transactions.
-			if (_isTransOwner && _trans != null) {
+			// Only clean up the transaction if this dalc was the owner.
+			if (_isTransOwner && _trans != null && !_trans.IsDisposed) {
+				if (_trans.NeedsCommit) {
+					this.Commit();
+				}
 				if (_trans.Connection != null) {
 					if (_trans.Connection.State != ConnectionState.Closed) {
 						_trans.Connection.Close();
@@ -247,7 +256,10 @@ namespace libMatt.Data {
 					_trans.Connection.Dispose();
 				}
 				_trans.Dispose();
+				_trans = null;
 			}
+
+			GC.SuppressFinalize(this);
 		}
 
 		#endregion

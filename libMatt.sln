@@ -5,7 +5,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libMatt", "libMatt\libMatt.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libMattTests", "libMattTests\libMattTests.csproj", "{2F052092-5BBB-4ADA-BA73-37928C6303FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libMattTestProject", "libMattTestProject\libMattTestProject.csproj", "{EFD29A75-4A32-4B71-B1D9-3E68E8BBFF65}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B895F8D6-6E09-4424-B8A0-CF9A2B9F4817}"
+	ProjectSection(SolutionItems) = preProject
+		libMatt.vsmdi = libMatt.vsmdi
+		Local.testsettings = Local.testsettings
+		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
+	EndProjectSection
+EndProject
 Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = libMatt.vsmdi
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -19,6 +31,10 @@ Global
 		{2F052092-5BBB-4ADA-BA73-37928C6303FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F052092-5BBB-4ADA-BA73-37928C6303FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F052092-5BBB-4ADA-BA73-37928C6303FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFD29A75-4A32-4B71-B1D9-3E68E8BBFF65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFD29A75-4A32-4B71-B1D9-3E68E8BBFF65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFD29A75-4A32-4B71-B1D9-3E68E8BBFF65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFD29A75-4A32-4B71-B1D9-3E68E8BBFF65}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
