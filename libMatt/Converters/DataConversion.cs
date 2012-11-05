@@ -11,6 +11,15 @@ namespace libMatt.Converters {
 		#region Primitives and strings
 
 		/// <summary>
+		/// If the string is empty/null, returns DBNull.Value, else returns the string.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static object OrDbNull(this string str) {
+			return (string.IsNullOrEmpty(str) ? (object)DBNull.Value : str);
+		}
+
+		/// <summary>
 		/// Safely gets a string representation of the object, returning string.Empty for null or DBNull.
 		/// </summary>
 		/// <param name="obj"></param>
@@ -87,6 +96,24 @@ namespace libMatt.Converters {
 			} else {
 				int i = 0;
 				return (int.TryParse(GetString(obj), out i) ? i : defaultValue);
+			}
+		}
+
+		/// <summary>
+		/// Attempts to parse a long out of the provided value. If unable to parse
+		/// a valid long, returns a new Nullable&lt;long&gt;, else returns the parsed value.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public static long? TryToLong(this object obj) {
+			if (obj == null || obj == DBNull.Value) {
+				return null;
+			}
+			long x;
+			if (long.TryParse(obj.ToString(), out x)) {
+				return x;
+			} else {
+				return null;
 			}
 		}
 
