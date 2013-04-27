@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using libMatt.Converters;
+using System.Linq;
 
 namespace libMatt.Data {
 
@@ -25,6 +26,8 @@ namespace libMatt.Data {
 		}
 
 		protected CommandType DefaultCommandType { get; set; }
+
+		#region Constructors
 
 		/// <summary>
 		/// Instantiates dalc to use an existing transaction.
@@ -50,6 +53,9 @@ namespace libMatt.Data {
 			this.DefaultCommandType = defaultCommandType;
 		}
 
+		#endregion
+
+		#region Helpers and properties
 
 		public IDataProvider DataProvider { get; private set; }
 
@@ -85,6 +91,43 @@ namespace libMatt.Data {
 			}
 		}
 
+		/// <summary>
+		/// Generates a set of parameters and auto-generated parameter
+		/// names suitable for building a SQL IN clause that is safe from
+		/// SQL injection.
+		/// </summary>
+		/// <param name="paramNamePrefix">The string prefix to use on all parameter names.
+		/// Generated parameter names will consist of this prefix followed by an underscore and
+		/// integer parameter index.</param>
+		/// <param name="paramNames">(out string[]) An array to be populated with parameter names. 
+		/// The contents of this array should be put into your SQL statement, 
+		/// i.e. <c>WHERE yourCol IN (string.Join(",", paramNames))</c></param>
+		/// <param name="values">(params object[]) The allowable values of the IN clause.</param>
+		/// <returns>An array of Param objects to be passed to the database command, whose names
+		/// will correspond to the paramNames out parameter.</returns>
+		protected Param[] ParameterizeInClause<T>(string paramNamePrefix, out string[] paramNames, params T[] values) {
+			Func<int, string> pName = i => "@" + paramNamePrefix + "_" + i.ToString();
+
+			paramNames = values.Select((v, i) => pName(i)).ToArray();
+			return values.Select((v, i) => new Param(pName(i), v)).ToArray();
+		}
+
+		/// <summary>
+		/// Executes ParameterizeInClause with a default paramNamePrefix of "p".
+		/// </summary>
+		/// <param name="paramNames">(out string[]) An array to be populated with parameter names. 
+		/// The contents of this array should be put into your SQL statement, 
+		/// i.e. <c>WHERE yourCol IN (string.Join(",", paramNames))</c></param>
+		/// <param name="values">(params object[]) The allowable values of the IN clause.</param>
+		/// <returns>An array of Param objects to be passed to the database command, whose names
+		/// will correspond to the paramNames out parameter.</returns>
+		protected Param[] ParameterizeInClause<T>(out string[] paramNames, params T[] values) {
+			return ParameterizeInClause("p", out paramNames, values);
+		}
+
+		#endregion
+
+		#region Commands
 
 		protected object ExecuteScalar(string commandText, CommandType commandType, params Param[] parameters) {
 			var cmd = GetCommand(commandText, parameters);
@@ -209,6 +252,7 @@ namespace libMatt.Data {
 			}
 		}
 
+		#endregion
 
 		#region Transactions
 
